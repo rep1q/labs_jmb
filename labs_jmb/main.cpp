@@ -3,8 +3,14 @@
 #include <vector>
 #include <locale>
 #include <fstream>
+#include <cmath>
 
 using std::cin;
+
+struct Tree{
+    int key;
+    Tree *left, *right;
+};
 
 struct Node{
     int date;
@@ -307,6 +313,11 @@ std::string popQueue(pQueue& tail, pQueue &head){
     return x;
 }
 
+void print(pQueue head, pQueue tail){
+    while (!isEmptyQueue(head))
+        std::cout<<popQueue(tail, head)<<" ";
+}
+
 void Task1(){
     int count;
     cin>>count;
@@ -599,24 +610,152 @@ void Task6(){
     
 }
 
-//void Task7(){
-//    std::ifstream Fin("text.txt");
-//    pQueue *head, *tail;
-//    initQueue(head, tail);
-//    int n;
-//    cin>>n;
-//    while (!Fin.eof()) {
-//        std::string s;
-//        getline(Fin,s);
-//        std::vector<std::string> words = SplitIntoWords(s);
-//        for (int i = 0; i<words.size(); ++i) {
-//            if (words[i].length()<n) {
-//                pushQueue(tail, words[i]);
-//            }
-//        }
-//    }
-//}
+void Task7(){
+    std::ifstream Fin("/Users/rep1q/Desktop/text.txt");
+    pQueue head, tail;
+    initQueue(head, tail);
+    int n;
+    cin>>n;
+    std::string s;
+    bool flag = false;
+    std::getline(Fin,s);
+    std::vector<std::string> words = SplitIntoWords(s);
+    for(int i =0;i<words.size() && flag == false;++i){
+        if (words[0].length()<n) {
+            firsQueue(head, tail, words[0]);
+            flag = true;
+        }
+    }
+    while (!Fin.eof()) {
+        getline(Fin, s);
+        words = SplitIntoWords(s);
+        for (int i = 0; i<words.size(); ++i) {
+            if (words[i].length()<n) {
+                pushQueue(tail, words[i]);
+            }
+        }
+    }
+    print(head,tail);
+    std::cout<<"\n";
+}
 
+Tree *first (int x){
+    Tree* root = new Tree;
+    root->key=x;
+    root->left=0;
+    root->right = 0;
+    return root;
+}
+
+void printH(Tree* root, int level){
+    if (root) {
+        printH(root->left, level+1);
+        for (int i =0; i<level; ++i) {
+            std::cout<<" ";
+        }
+        std::cout<<root->key<<"\n";
+        printH(root->right, level+1);
+    }
+}
+
+void printV(Tree* root){
+    if (root) {
+        printV(root->left);
+        std::cout.width(3);
+        std::cout<<root->key<<" ";
+        printV(root->right);
+    }
+}
+
+Tree* add(Tree* root, int x){
+    if (!root) {
+        root = new Tree;
+        root->key = x;
+        root->left=NULL;
+        root->right = NULL;
+    }
+    else{
+        if(x<root->key)
+            root->left=add(root->left, x);
+        else{
+            root->right = add(root->right, x);
+        }
+    }
+    return root;
+}
+
+void Task8(){
+    Tree *test = new Tree;
+    test = first(0);
+    for (int i = 1; i<11; ++i) {
+        int x = i;
+        add(test, pow(x*(-1),i));
+    }
+    int x,h=0;
+    while(test){
+        ++h;
+        x = test->key;
+        test = test ->left;
+    }
+    std::cout<<x<<" "<<h<<"\n\n";
+    printH(test,0);
+}
+
+Tree* searchElem(Tree* root, int x) {
+    Tree* temp = root;
+    bool flag = false;
+    while (temp && !flag) {
+        if (temp->key == x)
+            flag = true;
+        else if (x < temp->key)
+            temp = temp->left;
+        else
+            temp = temp->right;
+    }
+    if (flag == true)
+        return temp;
+    else
+        return NULL;
+}
+
+int searchId(Tree* root, int x) {
+    Tree* temp = root;
+    int id = 0;
+    bool flag = false;
+    while (temp && !flag) {
+        ++id;
+        if (temp->key == x)
+            flag = true;
+        else if (x < temp->key)
+            temp = temp->left;
+        else
+            temp = temp->right;
+    }
+    if (flag == true)
+        return id;
+    else
+        return NULL;
+}
+
+
+void Task9(){
+    Tree *test = new Tree;
+    test = first(0);
+    for (int i = 1; i<11; ++i) {
+        int x = i;
+        add(test, pow(x*(-1),i));
+    }
+    printH(test, 0);
+    if (searchElem(test, 4)) {
+        std::cout<<"Element succesfully find\n"<<"Id of element: "<<searchId(test, 4)<<"\n";
+    }
+    else
+        std::cout<<"Element not found";
+}
+
+void Task10(){
+    
+}
 
 int main() {
     setlocale(LC_ALL, "Russian");
@@ -627,8 +766,9 @@ int main() {
 //    Task5();
 //    Task6();
 //    Task7();
-    
-    
+//    Task8();
+//    Task9();
+    Task10();
     return 0;
 }
 
