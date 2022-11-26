@@ -651,6 +651,7 @@ void printH(Tree* root, int level){
     if (root) {
         printH(root->left, level+1);
         for (int i =0; i<level; ++i) {
+            std::cout.width(3);
             std::cout<<" ";
         }
         std::cout<<root->key<<"\n";
@@ -683,6 +684,16 @@ Tree* add(Tree* root, int x){
     }
     return root;
 }
+
+int Height(Tree* root) {
+    if (!root)
+        return 0;
+    else if (Height(root->left) > Height(root->right))
+            return Height(root->left) + 1;
+        else
+            return Height(root->right) + 1;
+}
+
 
 void Task8(){
     Tree *test = new Tree;
@@ -753,12 +764,49 @@ void Task9(){
         std::cout<<"Element not found";
 }
 
+Tree* RotLeft(Tree* root){
+    Tree* tmp = root->right;
+    root->right = tmp->left;
+    tmp->left = root;
+    return tmp;
+}
+
+Tree* RotRight(Tree* root){
+    Tree* tmp = root->left;
+    root->left = tmp->right;
+    tmp->right = root;
+    return tmp;
+}
+
+void BalanceBinaryTree(Tree*& root){
+    while(Height(root->left) - Height(root->right) > 1)
+        root = RotRight(root);
+    while(Height(root->right) - Height(root->left) > 1)
+        root = RotLeft(root);
+}
+
 void Task10(){
+    Tree* root = new Tree;
+    root = first(5);
+    add(root, 7);
+    add(root, 6);
+    add(root, 9);
+    add(root , 10);
+    add(root, 4);
+    std::cout<<"Not Balanced Tree:\n";
+    printH(root, 0);
+    BalanceBinaryTree(root);
+    std::cout<<"Already Balanced Tree:\n";
+    printH(root, 0);
+}
+
+void Task11(){
     
 }
 
 int main() {
     setlocale(LC_ALL, "Russian");
+    srand(time(NULL));
     //Task1();
     // Task2();
 //    Task3();
@@ -769,6 +817,7 @@ int main() {
 //    Task8();
 //    Task9();
     Task10();
+//    Task11();
     return 0;
 }
 
